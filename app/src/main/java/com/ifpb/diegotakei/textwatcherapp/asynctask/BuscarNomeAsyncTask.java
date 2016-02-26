@@ -46,8 +46,10 @@ public class BuscarNomeAsyncTask extends AsyncTask<JSONObject,Void,Response> {
         String nome = null;
         List<String> nomes = new ArrayList<String>();
         int i = 0;
+
         try {
             JSONArray jsonArray = new JSONArray(response.getContentValue());
+
             while(jsonArray.getString(i)!= null) {
                 JSONObject jo = new JSONObject(jsonArray.getString(i));
                 nome = jo.getString("fullName");
