@@ -20,7 +20,6 @@ public class SplashActivity extends Activity implements Runnable {
         Handler SplashScreen = new Handler();
         SplashScreen.postDelayed(SplashActivity.this, 3000);
     }
-    
     @Override
     public void run() {
         Intent intent = new Intent(this, MainActivity.class);
