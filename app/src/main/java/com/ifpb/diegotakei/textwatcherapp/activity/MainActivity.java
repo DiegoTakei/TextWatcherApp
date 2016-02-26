@@ -64,6 +64,9 @@ public class MainActivity extends Activity implements TextWatcher {
                 BuscarNomeAsyncTask buscarNomeAsyncTask = new BuscarNomeAsyncTask();
                 buscarNomeAsyncTask.execute(json);
             }
+            else{
+                adapter.clear();
+            }
 
         } catch (JSONException e) {
 
