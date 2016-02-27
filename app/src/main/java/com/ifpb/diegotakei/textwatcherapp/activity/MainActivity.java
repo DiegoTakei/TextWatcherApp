@@ -81,9 +81,8 @@ public class MainActivity extends Activity implements TextWatcher {
 
     public static void atualizarLista(List<String> nomes1){
         adapter.clear();
-        for (int i = 0;i<nomes1.size();i++) {
-            nomes.add(nomes1.get(i));
-            adapter.notifyDataSetChanged();
-        }
+        nomes.addAll(nomes1);
+        adapter.notifyDataSetChanged();
+
     }
 }
