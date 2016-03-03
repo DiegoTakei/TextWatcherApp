@@ -2,8 +2,6 @@ package com.ifpb.diegotakei.textwatcherapp.util;
 
 import android.util.Log;
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -22,7 +20,7 @@ public class HttpService {
     private static final String URL_CONTEXT = "http://ladoss.com.br:8773/pesquisa-simpif-service/services/";
 
 
-    public static Response sendJSONPostResquest(String service, JSONObject jsonObject)
+    public static Response sendJSONPostResquest(String service, String jsonObject)
             throws MalformedURLException, IOException {
 
         HttpURLConnection connection = null;
@@ -40,7 +38,7 @@ public class HttpService {
 
         DataOutputStream stream = new DataOutputStream(connection.getOutputStream());
 
-        stream.writeBytes(jsonObject.toString());
+        stream.writeBytes(jsonObject);
         stream.flush();
         stream.close();
 

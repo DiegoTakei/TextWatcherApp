@@ -3,34 +3,43 @@ package com.ifpb.diegotakei.textwatcherapp.asynctask;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.ifpb.diegotakei.textwatcherapp.activity.MainActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.ifpb.diegotakei.textwatcherapp.callback.BuscarPessoaCallBack;
+import com.ifpb.diegotakei.textwatcherapp.entidade.Pessoa;
 import com.ifpb.diegotakei.textwatcherapp.util.HttpService;
 import com.ifpb.diegotakei.textwatcherapp.util.Response;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Diego Takei on 25/02/2016.
  */
-public class BuscarNomeAsyncTask extends AsyncTask<JSONObject,Void,Response> {
+    public class BuscarNomeAsyncTask extends AsyncTask<Pessoa,Void,Response> {
+
+    private BuscarPessoaCallBack buscarNomeCallBack;
+
+    public BuscarNomeAsyncTask(BuscarPessoaCallBack buscarNomeCallBack) {
+
+        this.buscarNomeCallBack = buscarNomeCallBack;
+    }
 
     @Override
-    protected Response doInBackground(JSONObject... jsons) {
+    protected Response doInBackground(Pessoa... pessoas) {
 
         Response response = null;
 
-        JSONObject json = jsons[0];
-        Log.i("EditTextListener", "doInBackground (JSON): " + json);
+        Pessoa pessoa = pessoas[0];
+        Gson gson = new Gson();
+
+        Log.i("EditTextListener", "doInBackground (JSON): " + pessoa);
 
         try {
 
-            response = HttpService.sendJSONPostResquest("get-byname", json);
+            response = HttpService.sendJSONPostResquest("get-byname", gson.toJson(pessoa));
 
         } catch (IOException e) {
 
@@ -43,25 +52,22 @@ public class BuscarNomeAsyncTask extends AsyncTask<JSONObject,Void,Response> {
     @Override
     protected void onPostExecute(Response response) {
 
-        String nome = null;
-        List<String> nomes = new ArrayList<String>();
-        int i = 0;
+        int codeHttp = response.getStatusCodeHttp();
 
-        try {
-            JSONArray jsonArray = new JSONArray(response.getContentValue());
+        Log.i("EditTextListener", "Código HTTP: " + codeHttp
+                + " Conteúdo: " + response.getContentValue());
 
-            while(jsonArray.getString(i)!= null) {
-                JSONObject jo = new JSONObject(jsonArray.getString(i));
-                nome = jo.getString("fullName");
-                nomes.add(nome);
-                i++;
-            }
+        if (codeHttp != HttpURLConnection.HTTP_OK) {
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+            buscarNomeCallBack.errorBuscarNome(response.getContentValue());
+
+        } else {
+
+            Gson gson = new Gson();
+            List<Pessoa> pessoas = gson.fromJson(response.getContentValue(),
+                    new TypeToken<ArrayList<Pessoa>>(){}.getType());
+
+            buscarNomeCallBack.backBuscarNome(pessoas);
         }
-
-        MainActivity.atualizarLista(nomes);
-
     }
 }
